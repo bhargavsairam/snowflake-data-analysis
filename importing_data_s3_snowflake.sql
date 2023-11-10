@@ -1,6 +1,6 @@
 CREATE STAGE my_stage
 URL = "s3://snowflake-data-storage/instacart/"
-CREDENTIALS = (AWS_KEY_ID = 'AKIASARHYJ4ZVHTM3',AWS_SECRET_KEY='M699IkP0gon2IKk+E3+5Xe4IKZHPAj6+uAU33')
+CREDENTIALS = (AWS_KEY_ID = 'AKIASARHYJ4ZVHTM3',AWS_SECRET_KEY='***************IKk+E3+5Xe4IKZHPAj6+uAU33')
 //Made chages to creds xD
 CREATE OR REPLACE FILE FORMAT csv_file_format
 TYPE = 'CSV'
