@@ -6,7 +6,7 @@ CREATE OR REPLACE SCHEMA external_stages;
 //creating my staging area which serves as a stage with my AWS s3 bucket credentials
 CREATE STAGE my_stage
 URL = "s3://bucket-for-snowflake-data/stage-and-copy/"
-CREDENTIALS = (AWS_KEY_ID = 'AKIAZXN344AARXZWZY4W' AWS_SECRET_KEY = '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');
+CREDENTIALS = (AWS_KEY_ID = '****' AWS_SECRET_KEY = '*********');
 
 //describing my staging area
 DESC STAGE MANAGE_DB.external_stages.my_stage
