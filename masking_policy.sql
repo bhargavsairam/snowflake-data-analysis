@@ -1,0 +1,73 @@
+CREATE DATABASE DEMO_DB;
+
+CREATE OR REPLACE TABLE CUSTOMERS(
+id number,
+full_name varchar,
+email varchar,
+phone varchar,
+spent number,
+create_date DATE DEFAULT CURRENT_DATE
+);
+
+INSERT INTO CUSTOMERS (id,full_name, email,phone,spent)
+VALUES
+(1,'John Mcenroe','jroe@gmail.com','414-326-3525',140),
+(2,'Jane Mcenroe','jaroe@gmail.com','427-336-6574',260),
+(3,'Albert hazard','Ahazard@gmail.com','627-831-8264',640),
+(4,'chloe connors','cconnors@gmail.com','726-733-8205',960),
+(5,'calum cullen','cacullen@gmail.com','723-721-3536',510),
+(6,'stuart  little','slittle1@gmail.com','527-316-8225',153);
+
+
+SELECT * FROM CUSTOMERS;
+
+
+
+CREATE OR REPLACE ROLE ANALYST_MASKED;
+CREATE OR REPLACE ROLE ANALYST_FULL;
+
+
+
+GRANT SELECT ON TABLE DEMO_DB.PUBLIC.CUSTOMERS TO ROLE ANALYST_MASKED;
+GRANT SELECT ON TABLE DEMO_DB.PUBLIC.CUSTOMERS TO ROLE ANALYST_FULL;
+
+
+GRANT USAGE ON DATABASE DEMO_DB TO ROLE ANALYST_MASKED;
+GRANT USAGE ON DATABASE DEMO_DB TO ROLE ANALYST_FULL;
+ 
+
+
+GRANT USAGE ON SCHEMA DEMO_DB.PUBLIC TO ROLE ANALYST_MASKED;
+GRANT USAGE ON SCHEMA DEMO_DB.PUBLIC TO ROLE ANALYST_FULL;
+
+
+GRANT USAGE ON WAREHOUSE COMPUTE_WH TO ROLE ANALYST_MASKED;
+GRANT USAGE ON WAREHOUSE COMPUTE_WH TO ROLE ANALYST_FULL;
+
+--assign roles to user
+GRANT ROLE ANALYST_MASKED TO USER BHARGAVSAIRAM;
+GRANT ROLE ANALYST_FULL TO USER BHARGAVSAIRAM;
+
+CREATE OR REPLACE MASKING POLICY PHONE
+AS (VAL VARCHAR) RETURNS VARCHAR ->
+CASE 
+WHEN current_role() in ('ANALYST_FULL','ACCOUNTADMIN') THEN VAL
+ELSE '###-###-####'
+END;
+
+
+ALTER TABLE IF EXISTS CUSTOMERS MODIFY COLUMN PHONE
+SET MASKING POLICY PHONE;
+
+
+USE ROLE ANALYST_FULL;
+SELECT * FROM CUSTOMERS;
+
+USE ROLE ANALYST_MASKED;
+SELECT * FROM CUSTOMERS;
+
+--show columns with applied policies
+SELECT * FROM TABLE information_schema.policy_references(policy_name =>'phone')
+
+-- if we want to drop the masking policy, we need to unset it from all the columns it is assigned to and then drop it.
+-- we cannot add a new masking policy on a column that already has a masking policy
